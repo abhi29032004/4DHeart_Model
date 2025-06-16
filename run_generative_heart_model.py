@@ -52,13 +52,29 @@ def run_dhb_echo(args):
     logger.info(f"Saving results in {experiment_path}")
 
     data_dir = args.echo_dir
+    
+    # Verify dataset structure
+    videos_dir = os.path.join(data_dir, "Videos")
+    if not os.path.exists(videos_dir):
+        logger.error(f"Videos directory not found at: {videos_dir}")
+        return
+    
+    file_list_path = os.path.join(data_dir, "FileList.csv")
+    if not os.path.exists(file_list_path):
+        logger.error(f"FileList.csv not found at: {file_list_path}")
+        return
 
-    # Load EchoNet-Dynamic data
     try:
-        data_info, all_files = load_data_echonet(logger, data_dir)
-    except FileNotFoundError as e:
-        logger.error(f"File not found: {e}")
-        return  # get list of cached files and data array (1 row of data per file)
+        # Load EchoNet-Dynamic data
+        data_info, all_files = load_data_echonet(logger, data_dir)  # get list of cached files and data array
+        if not data_info.empty:
+            logger.info(f"Successfully loaded {len(data_info)} video files")
+        else:
+            logger.error("No video files were loaded")
+            return
+    except Exception as e:
+        logger.error(f"Error loading data: {str(e)}")
+        return
 
     # Only use train and val splits
     echonet_train_ids = data_info[data_info.Split == 'TRAIN'].index.values  # get train file names
