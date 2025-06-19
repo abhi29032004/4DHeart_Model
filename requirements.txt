@@ -2,7 +2,12 @@ GPUtil==1.4.0
 pandas~=1.4.2
 Pillow~=9.1.0
 PyYAML==6.0
-tensorflow-gpu~=2.8.0
+tensorflow-gpu==2.8.0
+cuda-python==11.7.0
+nvidia-cublas-cu11==11.10.3.66
+nvidia-cuda-nvrtc-cu11==11.7.99
+nvidia-cuda-runtime-cu11==11.7.99
+nvidia-cudnn-cu11==8.5.0.96
 numpy~=1.22.3
 opencv-python~=4.5.5.64
 matplotlib~=3.5.2

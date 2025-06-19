@@ -13,7 +13,19 @@ import platform  # Add platform module for OS detection
 import sys
 sys.path.append(r"C:\Users\ravis\Desktop\4DHeartModel\my_env\Lib\site-packages")
 
-import GPUtil as GPU
+# Add GPU detection and logging
+try:
+    import GPUtil
+    GPUS = GPUtil.getGPUs()
+    if GPUS:
+        logger.info(f"Found {len(GPUS)} GPU(s):")
+        for gpu in GPUS:
+            logger.info(f"GPU {gpu.id}: {gpu.name} (Memory: {gpu.memoryTotal}MB)")
+    else:
+        logger.warning("No GPUs found, using CPU")
+except Exception as e:
+    logger.warning(f"Could not detect GPUs: {e}")
+    GPUS = []
 
     
 # Conditionally import Xvfb based on the platform
