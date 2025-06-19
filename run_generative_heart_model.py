@@ -1,6 +1,21 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'  # Disable tensorflow info and warning messages
 
+import tensorflow as tf
+# Configure GPU memory growth
+gpus = tf.config.experimental.list_physical_devices('GPU')
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        print(f"Found {len(gpus)} GPU(s):")
+        for gpu in gpus:
+            print(f"Name: {gpu.name}, Type: {gpu.device_type}")
+    except RuntimeError as e:
+        print(e)
+else:
+    print("No GPU found. Running on CPU")
+
 import argparse
 import yaml
 import logging
@@ -1318,7 +1333,11 @@ def run_ef_conv(args, ef_conv_configs):
 
 
 def main():
-
+    # Add GPU check
+    if not tf.test.is_built_with_cuda():
+        logger.warning("TensorFlow is not compiled with CUDA support")
+    else:
+        logger.info(f"Found {len(tf.config.list_physical_devices('GPU'))} GPU(s)")
     project_dir = Path(__file__).absolute().parent  # absolute path to this python file
 
     # parse args
@@ -1420,6 +1439,7 @@ def main():
 if __name__ == "__main__":
 
     # open virtual display then launch main()
+
     if LEOMED_RUN and platform.system() != "Windows":  # Only use Xvfb on non-Windows platforms
         with Xvfb() as xvfb:
             main()
